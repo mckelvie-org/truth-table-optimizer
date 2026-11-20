@@ -18,6 +18,13 @@ Both results are exact minimums found with a SAT solver, not heuristics.
 The result uses only NAND gates. NOT appears as a 1-input NAND, written
 `NAND(x, x)`, and counts as one gate and one gate delay like any other NAND.
 
+The only signals available are the inputs `A`–`D`. Constant 0 and 1 are
+not available as inputs, so a constant has to be built from gates. In the
+degenerate case where `f` is a constant, constant 1 (`FFFF`) takes 2 gates,
+`NAND(x, NAND(x, x))`, and constant 0 (`0000`) takes 3, a NOT of that.
+`x` is any input. If `f` is just a copy of one input, as in `AAAA`, no
+gates are needed.
+
 ## Where this is useful
 
 This tool helps with any puzzle or design where you build logic from NAND

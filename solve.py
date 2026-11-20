@@ -230,6 +230,10 @@ Find an optimal circuit for any 4-input boolean function f(A, B, C, D),
 built only from 2-input NAND gates. NOT is a 1-input NAND, i.e. NAND(x, x),
 and counts as one gate.
 
+Constant 0 and 1 are not available as inputs, so a constant f is built
+from gates: constant 1 (FFFF) takes 2 gates, NAND(x, NAND(x, x)), and
+constant 0 (0000) takes 3. A copy of one input (e.g. AAAA) takes none.
+
 The circuit is optimized first for the fewest NAND gates, and then, among
 circuits with that gate count, for the lowest maximum gate delay (the number
 of gates on the longest path from an input to f). Both are exact minimums
@@ -303,8 +307,7 @@ def main():
     for j in range(NIN):
         if tt == sum(inval(j, t) << t for t in range(ROWS)):
             print(f"  f = {NAMES[j]}   (no gates needed)")
-            if args.output or args.show:
-                print("  (nothing to draw)")
+            output_drawing(args, tt, [], [], "0 gates, delay 0", out=j)
             return
 
     # 1) minimum gate count (optionally under a delay bound)
@@ -334,20 +337,29 @@ def main():
 
     print()
     rows, summary = show(tt, gates)
+    output_drawing(args, tt, gates, rows, summary)
 
-    if args.output or args.show:
-        import draw  # only drawing needs schemdraw
 
-        svg = draw.draw_svg(gates, NIN, NAMES)
-        title = f"f = 0x{tt:04X}: {fmt_sop(tt)} ({summary})"
-        page = draw.html_page(title, svg, rows)
-        if args.output:
-            is_svg = args.output.lower().endswith(".svg")
-            with open(args.output, "w", encoding="utf-8") as f:
-                f.write(svg if is_svg else page)
-            print(f"\n  drawing written to {args.output}")
-        if args.show:
-            draw.open_in_browser(page)
+def output_drawing(args, tt, gates, rows, summary, out=None):
+    """Save and/or show the schematic, as requested by --output and --show.
+
+    rows and summary are as returned by show(). out is the node driving f;
+    it defaults to the last gate, and is the copied input when gates is empty.
+    """
+    if not (args.output or args.show):
+        return
+    import draw  # only drawing needs schemdraw
+
+    svg = draw.draw_svg(gates, NIN, NAMES, out=out)
+    title = f"f = 0x{tt:04X}: {fmt_sop(tt)} ({summary})"
+    page = draw.html_page(title, svg, rows)
+    if args.output:
+        is_svg = args.output.lower().endswith(".svg")
+        with open(args.output, "w", encoding="utf-8") as f:
+            f.write(svg if is_svg else page)
+        print(f"\n  drawing written to {args.output}")
+    if args.show:
+        draw.open_in_browser(page)
 
 
 if __name__ == "__main__":

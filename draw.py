@@ -78,15 +78,16 @@ def _lane_crossings(order, spans, row_y, sinks):
     return n
 
 
-def draw_svg(gates, nin, names, out_name="f", gate_name=None):
+def draw_svg(gates, nin, names, out_name="f", gate_name=None, out=None):
     """Return an SVG drawing of the netlist as a string.
 
     gates is [(node, (j, k))] in node order, as returned by solve(); a gate
     with j == k is drawn as a NOT. names gives the primary input labels.
-    gate_name(node) gives each gate's label. The last gate drives the output
-    signal, whose wire is labeled out_name.
+    gate_name(node) gives each gate's label. Node out (by default the last
+    gate) drives the output signal, whose wire is labeled out_name. With no
+    gates, out is the primary input that f copies.
     """
-    out = gates[-1][0]
+    out = gates[-1][0] if out is None else out
     gate_name = gate_name or (lambda n: f"g{n - nin + 1}")
     depth = _depths(gates, nin)
     ins = dict(gates)
@@ -94,7 +95,7 @@ def draw_svg(gates, nin, names, out_name="f", gate_name=None):
     for i, (j, k) in gates:
         for s in {j, k}:
             sinks_of.setdefault(s, []).append(i)
-    used_inputs = [n for n in range(nin) if n in sinks_of]
+    used_inputs = [n for n in range(nin) if n in sinks_of or n == out]
 
     rows = _row_order(gates, nin, used_inputs)
     row_y = {n: -r * ROW_H for r, n in enumerate(rows)}
@@ -153,9 +154,9 @@ def draw_svg(gates, nin, names, out_name="f", gate_name=None):
             else:
                 d.add(logic.Nand().anchor("in1").at((x0, y + PIN_DY)))
             d.add(elm.Label().at((x0 + GATE_W / 2, y + 0.7)).label(gate_name(i)))
-            if i == out:
-                d.add(elm.Line().at((x0 + GATE_W, y)).to((x0 + GATE_W + 0.6, y))
-                      .label(out_name, loc="right"))
+
+        x, y = out_x(out), row_y[out]
+        d.add(elm.Line().at((x, y)).to((x + 0.6, y)).label(out_name, loc="right"))
 
         for s, ys in taps.items():
             lx, sy = lane_x[s], row_y[s]
@@ -182,6 +183,8 @@ def html_page(title, svg, rows):
     body = "\n".join(
         f"<tr><td>{html.escape(g)}</td><td><code>{html.escape(defn)}</code></td>"
         f"<td>{html.escape(fn)}</td></tr>" for g, defn, fn in rows)
+    table = ("<table><tr><th>gate</th><th>definition</th><th>function</th></tr>\n"
+             f"{body}\n</table>") if rows else ""
     return f"""<!doctype html>
 <html><head><meta charset="utf-8"><title>{html.escape(title)}</title>
 <style>
@@ -192,9 +195,8 @@ def html_page(title, svg, rows):
 </style></head>
 <body><h1>{html.escape(title)}</h1>
 <div class="circuit">{svg}</div>
-<table><tr><th>gate</th><th>definition</th><th>function</th></tr>
-{body}
-</table></body></html>
+{table}
+</body></html>
 """
 
 
