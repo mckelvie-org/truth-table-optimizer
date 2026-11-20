@@ -5,7 +5,7 @@
 groups = ["default"]
 strategy = ["inherit_metadata"]
 lock_version = "4.5.1"
-content_hash = "sha256:e4921b48849a82c818a62410853022690fe1f2641ab71563406b56bc76dd8681"
+content_hash = "sha256:c8e9b34c57f4fbddf5c048b1ed71c140953078c74e4104775e9345a0b0a11ee2"
 
 [[metadata.targets]]
 requires_python = ">=3.14"
@@ -50,6 +50,17 @@ files = [
     {file = "python_sat-1.9.dev24-cp315-cp315t-musllinux_1_2_x86_64.whl", hash = "sha256:194ebd1b00ebe36f97236bab0eefc72d45d3e2539a838f43d52c2cbf1269aa4f"},
     {file = "python_sat-1.9.dev24-cp315-cp315t-win_amd64.whl", hash = "sha256:84a3d4e727ddd0a25912ebd018c04cac9a7d730918ee55fbd6ce4502e73f0630"},
     {file = "python_sat-1.9.dev24.tar.gz", hash = "sha256:18c26f7bb21783faacdda1c3f65226a210ef2203141d5da574eb02e5753c62c7"},
+]
+
+[[package]]
+name = "schemdraw"
+version = "0.23"
+requires_python = ">=3.9"
+summary = "Electrical circuit schematic drawing"
+groups = ["default"]
+files = [
+    {file = "schemdraw-0.23-py3-none-any.whl", hash = "sha256:b6af33cf175fb7692ed3f71b5d2702c400e009ae26efe76c6fa4f85d34e0fac5"},
+    {file = "schemdraw-0.23.tar.gz", hash = "sha256:e71afd5ec84edfd9b707331c5bcb49ed7133af85bd17dae461de3fc260b0132f"},
 ]
 
 [[package]]

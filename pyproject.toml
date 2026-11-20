@@ -5,7 +5,7 @@ description = "4-input combinatorial logic optimizer"
 authors = [
     {name = "Sam McKelvie", email = "dev@mckelvie.org"},
 ]
-dependencies = ["python-sat>=1.9.dev24"]
+dependencies = ["python-sat>=1.9.dev24", "schemdraw>=0.23"]
 requires-python = ">=3.14"
 readme = "README.md"
 license = {text = "MIT"}
