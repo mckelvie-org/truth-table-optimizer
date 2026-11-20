@@ -1,0 +1,19 @@
+[project]
+name = "truth-table-optimizer"
+version = "0.1.0"
+description = "4-input combinatorial logic optimizer"
+authors = [
+    {name = "Sam McKelvie", email = "dev@mckelvie.org"},
+]
+dependencies = ["python-sat>=1.9.dev24"]
+requires-python = ">=3.14"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+
+[tool.pdm]
+distribution = true
